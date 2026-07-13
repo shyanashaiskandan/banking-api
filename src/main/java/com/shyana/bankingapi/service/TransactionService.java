@@ -9,6 +9,8 @@ import com.shyana.bankingapi.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -61,5 +63,24 @@ public class TransactionService {
                 transaction.getAmount(),
                 transaction.getCreatedAt()
         );
+    }
+
+    public List<TransactionResponse> getTransactions(UUID accountId) {
+        List<Transaction> transactions =
+                transactionRepository.findByAccountId(accountId);
+
+        List<TransactionResponse> responses = new ArrayList<>();
+
+        for (Transaction transaction : transactions) {
+            responses.add(new TransactionResponse(
+                    transaction.getId(),
+                    transaction.getSourceAccountId(),
+                    transaction.getDestinationAccountId(),
+                    transaction.getAmount(),
+                    transaction.getCreatedAt()
+            ));
+        }
+
+        return responses;
     }
 }

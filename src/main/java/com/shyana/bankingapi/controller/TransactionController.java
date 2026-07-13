@@ -6,8 +6,11 @@ import com.shyana.bankingapi.service.TransactionService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.UUID;
+
 @RestController
-@RequestMapping("/api/transactions")
+@RequestMapping("/api")
 public class TransactionController {
 
     private final TransactionService transactionService;
@@ -16,9 +19,15 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    @PostMapping
+    @PostMapping("/transactions")
     public TransactionResponse createTransaction(
             @Valid @RequestBody TransactionRequest request) {
         return transactionService.createTransaction(request);
+    }
+
+    @GetMapping("/accounts/{accountId}/transactions")
+    public List<TransactionResponse> getTransactions(
+            @PathVariable UUID accountId) {
+        return transactionService.getTransactions(accountId);
     }
 }
