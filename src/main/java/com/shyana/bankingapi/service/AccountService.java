@@ -35,4 +35,17 @@ public class AccountService {
                 account.getCreatedAt()
         );
     }
+
+    public AccountResponse getAccount(UUID accountId) {
+        Account account = accountRepository
+                .findById(accountId)
+                .orElseThrow();
+
+        return new AccountResponse(
+                account.getId(),
+                account.getOwnerName(),
+                account.getBalance(),
+                account.getCreatedAt()
+        );
+    }
 }
