@@ -6,6 +6,8 @@ import com.shyana.bankingapi.service.AccountService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/accounts")
 public class AccountController {
@@ -20,5 +22,10 @@ public class AccountController {
     public AccountResponse createAccount(
             @Valid @RequestBody CreateAccountRequest request) {
         return accountService.createAccount(request);
+    }
+
+    @GetMapping("/{accountId}")
+    public AccountResponse getAccount(@PathVariable UUID accountId) {
+        return accountService.getAccount(accountId);
     }
 }
