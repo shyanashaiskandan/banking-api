@@ -4,6 +4,8 @@ import com.shyana.bankingapi.dto.AccountResponse;
 import com.shyana.bankingapi.dto.CreateAccountRequest;
 import com.shyana.bankingapi.dto.TransactionRequest;
 import com.shyana.bankingapi.dto.TransactionResponse;
+import com.shyana.bankingapi.exception.InsufficientFundsException;
+import com.shyana.bankingapi.exception.InvalidTransactionException;
 import com.shyana.bankingapi.repository.AccountRepository;
 import com.shyana.bankingapi.repository.InMemoryAccountRepository;
 import com.shyana.bankingapi.repository.InMemoryTransactionRepository;
@@ -112,7 +114,7 @@ class TransactionServiceTest {
                 );
 
         assertThrows(
-                IllegalArgumentException.class,
+                InsufficientFundsException.class,
                 () -> transactionService.createTransaction(request)
         );
     }
@@ -136,7 +138,7 @@ class TransactionServiceTest {
                 );
 
         assertThrows(
-                IllegalArgumentException.class,
+                InvalidTransactionException.class,
                 () -> transactionService.createTransaction(request)
         );
     }

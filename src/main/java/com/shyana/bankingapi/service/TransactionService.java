@@ -2,6 +2,9 @@ package com.shyana.bankingapi.service;
 
 import com.shyana.bankingapi.dto.TransactionRequest;
 import com.shyana.bankingapi.dto.TransactionResponse;
+import com.shyana.bankingapi.exception.AccountNotFoundException;
+import com.shyana.bankingapi.exception.InsufficientFundsException;
+import com.shyana.bankingapi.exception.InvalidTransactionException;
 import com.shyana.bankingapi.model.Account;
 import com.shyana.bankingapi.model.Transaction;
 import com.shyana.bankingapi.repository.AccountRepository;
@@ -29,19 +32,19 @@ public class TransactionService {
 
     public TransactionResponse createTransaction(TransactionRequest request) {
         if (request.sourceAccountId().equals(request.destinationAccountId())) {
-            throw new IllegalArgumentException("Cannot transfer to the same account");
+            throw new InvalidTransactionException();
         }
 
         Account sourceAccount = accountRepository
                 .findById(request.sourceAccountId())
-                .orElseThrow();
+                .orElseThrow(AccountNotFoundException::new);
 
         Account destinationAccount = accountRepository
                 .findById(request.destinationAccountId())
-                .orElseThrow();
+                .orElseThrow(AccountNotFoundException::new);
 
         if (sourceAccount.getBalance().compareTo(request.amount()) < 0) {
-            throw new IllegalArgumentException("Insufficient funds");
+            throw new InsufficientFundsException();
         }
 
         sourceAccount.withdraw(request.amount());
@@ -70,6 +73,10 @@ public class TransactionService {
     }
 
     public List<TransactionResponse> getTransactions(UUID accountId) {
+        accountRepository
+                .findById(accountId)
+                .orElseThrow(AccountNotFoundException::new);
+
         List<Transaction> transactions =
                 transactionRepository.findByAccountId(accountId);
 

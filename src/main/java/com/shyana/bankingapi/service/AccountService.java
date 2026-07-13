@@ -2,6 +2,7 @@ package com.shyana.bankingapi.service;
 
 import com.shyana.bankingapi.dto.AccountResponse;
 import com.shyana.bankingapi.dto.CreateAccountRequest;
+import com.shyana.bankingapi.exception.AccountNotFoundException;
 import com.shyana.bankingapi.model.Account;
 import com.shyana.bankingapi.repository.AccountRepository;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ public class AccountService {
     public AccountResponse getAccount(UUID accountId) {
         Account account = accountRepository
                 .findById(accountId)
-                .orElseThrow();
+                .orElseThrow(AccountNotFoundException::new);
 
         return new AccountResponse(
                 account.getId(),
