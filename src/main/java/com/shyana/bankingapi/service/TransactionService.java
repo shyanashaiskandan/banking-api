@@ -28,6 +28,10 @@ public class TransactionService {
     }
 
     public TransactionResponse createTransaction(TransactionRequest request) {
+        if (request.sourceAccountId().equals(request.destinationAccountId())) {
+            throw new IllegalArgumentException("Cannot transfer to the same account");
+        }
+
         Account sourceAccount = accountRepository
                 .findById(request.sourceAccountId())
                 .orElseThrow();
