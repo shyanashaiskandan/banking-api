@@ -2,6 +2,7 @@ package com.shyana.bankingapi;
 
 import com.shyana.bankingapi.dto.AccountResponse;
 import com.shyana.bankingapi.dto.CreateAccountRequest;
+import com.shyana.bankingapi.exception.AccountNotFoundException;
 import com.shyana.bankingapi.repository.AccountRepository;
 import com.shyana.bankingapi.repository.InMemoryAccountRepository;
 import com.shyana.bankingapi.service.AccountService;
@@ -9,9 +10,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AccountServiceTest {
 
@@ -62,5 +63,14 @@ class AccountServiceTest {
 
         assertEquals(createdAccount.id(), foundAccount.id());
         assertEquals("Shyana", foundAccount.ownerName());
+    }
+
+    // Checks that an error is thrown when the account does not exist.
+    @Test
+    void throwsErrorWhenAccountDoesNotExist() {
+        assertThrows(
+                AccountNotFoundException.class,
+                () -> accountService.getAccount(UUID.randomUUID())
+        );
     }
 }

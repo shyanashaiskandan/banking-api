@@ -4,6 +4,7 @@ import com.shyana.bankingapi.dto.AccountResponse;
 import com.shyana.bankingapi.dto.CreateAccountRequest;
 import com.shyana.bankingapi.dto.TransactionRequest;
 import com.shyana.bankingapi.dto.TransactionResponse;
+import com.shyana.bankingapi.exception.AccountNotFoundException;
 import com.shyana.bankingapi.exception.InsufficientFundsException;
 import com.shyana.bankingapi.exception.InvalidTransactionException;
 import com.shyana.bankingapi.repository.AccountRepository;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -177,6 +179,30 @@ class TransactionServiceTest {
         assertEquals(
                 new BigDecimal("100.00"),
                 transactions.get(0).amount()
+        );
+    }
+
+    // Checks that a transaction fails when the source account does not exist.
+    @Test
+    void preventsTransactionWithMissingAccount() {
+        AccountResponse destinationAccount =
+                accountService.createAccount(
+                        new CreateAccountRequest(
+                                "Destination",
+                                BigDecimal.ZERO
+                        )
+                );
+
+        TransactionRequest request =
+                new TransactionRequest(
+                        UUID.randomUUID(),
+                        destinationAccount.id(),
+                        new BigDecimal("100.00")
+                );
+
+        assertThrows(
+                AccountNotFoundException.class,
+                () -> transactionService.createTransaction(request)
         );
     }
 }
